@@ -33,3 +33,5 @@ In sum, we have described a network composed of two parts, a base network (green
   <img src="https://github.com/user-attachments/assets/64c858cf-9b82-4928-9877-6b5d5fa80b3b" width="600">
 </div>
 <p align="center">Figure 2: the full network for Aphelios's weapon states and weapon cycles. The objective is to traverse from any weapon state (green node) to any weapon cycle (purple node) in the shortest number of steps where the green links are length 1 and the purple links are length 0. </p>
+
+## The Search (Dijkstra's Algorithm)
