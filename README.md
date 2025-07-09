@@ -1,6 +1,6 @@
 # An Implementation of Dijkstra's Algorithm to a League of Legends Champion
 ### TL;DR
-The present repository has painstakingly developed all of the shortest solutions to the Aphelios weapon swapping problem. These may be found along with a quick look-up tool in the excel file, [Aphelios_Methods.xlsx](https://github.com/paulsylvia20/Djikstras_Algorithm/blob/1a8f58013b5c6eedfc4ac46de77b1a841bf63032/Aphelios_Methods.xlsx). For example, if a player was interested in going from the initial weapon state (weapon queue = PBW) to the weapon cycle GPBRW, the lookup will return '(1) GP' meaning the player should deplete Green, then Purple. If you are interested in how I arrived at these solutions, please read-on and check out the Python implementation of Dijstra's Algorithm with detailed annotations, ([Dijkstras_Algorithm.ipynb](https://github.com/paulsylvia20/Dijkstras_Algorithm/blob/9fe751c27458ffccc662a31f297e97baf733007d/Dijkstra's_Algorithm.ipynb)).
+The present repository has painstakingly developed all of the shortest solutions to the Aphelios weapon swapping problem. These are found along with a quick look-up tool in an excel file in this repository, [Aphelios_Methods.xlsx](https://github.com/paulsylvia20/Djikstras_Algorithm/blob/1a8f58013b5c6eedfc4ac46de77b1a841bf63032/Aphelios_Methods.xlsx). For example, if a player was interested in going from the initial weapon state (weapon queue = PBW) to the weapon cycle GPBRW, the lookup will return '(1) GP' meaning the player should deplete Green, then Purple. Many of the solutions are longer, some are shorter, and some querries have multiple solutions. If you are interested in how I arrived at these solutions, please read the write-up and check out the Python implementation of Dijstra's Algorithm with detailed annotations, ([Dijkstras_Algorithm.ipynb](https://github.com/paulsylvia20/Dijkstras_Algorithm/blob/9fe751c27458ffccc662a31f297e97baf733007d/Dijkstra's_Algorithm.ipynb)).
 
 ---
 This project was born out of curiosity. As a casual League of Legends player, I became interested in a problem posed by the game's design. The problem goes like this: a champion named Aphelios uses a rotating weapons system. Whenever one of his weapons runs out of "ammo," it is replaced by the next weapon in a queue. There are 5 weapons total, two equipped in his mainhand / offhand, and 3 queued (see the image below where each weapon is represented by a unique symbol). The player progresses by depleting the ammo of his weapons, putting them at the end of the queue, then obtaining whichever weapon is at the top of the queue. One result of this design is that the order of the weapons is changeable. For example, it is desirable to have the green weapon come after the purple weapon in the queue. Another result is that the player must think about how to deplete their weapons in such a way that they use the best weapon orderings (referred to as weapon cycles).
@@ -8,7 +8,7 @@ This project was born out of curiosity. As a casual League of Legends player, I 
 This repository presents the general solution. I have found every shortest weapon depletion order, going from each state of the weapon system to every other state of the weapon system. I did this by applying a very general algorithm (Djikstra's algorithm) and iterating through every possible weapon state.
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/4bb759fe-96fd-4a99-b330-263a28f9ea47" width="600">
+  <img src="https://github.com/user-attachments/assets/4bb759fe-96fd-4a99-b330-263a28f9ea47" width="400">
 </div>
 <p align="center">Figure 1: a representation of Aphelios's 5 weapons. Left hand side (2 larger weapons) are his active weapons. 
   Right hand side (3 smaller weapons) are his weapon queue/inactive weapons. This particular weapon state could be either GRPBW or RGPBW. </p>
@@ -32,8 +32,17 @@ Next, we associate the 24 cycle nodes with the 60 state nodes. We should also be
 In sum, we have described a network composed of two parts, a base network (green) and an associational network (purple). The base network is both *directed* and *cyclical* with 60 state nodes, interconnected in duplicate via 120 directed edges of length 1. On top of this, there is an associational network that tags each weapon state node with its attendent weapon cycles. Each weapon state has 2 associated weapon cycles. In total, it consists of 120 additional *direct* edges of length 0 going from state nodes (inner circle) to cycle nodes (outer circle) where each weapon cycle recieves connection from exactly 5 state nodes.
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/64c858cf-9b82-4928-9877-6b5d5fa80b3b" width="600">
+  <img src="https://github.com/user-attachments/assets/64c858cf-9b82-4928-9877-6b5d5fa80b3b" width="400">
 </div>
+
 <p align="center">Figure 2: the full network for Aphelios's weapon states and weapon cycles. The objective is to traverse from any weapon state (green node) to any weapon cycle (purple node) in the shortest number of steps where the green links are length 1 and the purple links are length 0. </p>
 
 ## The Search (Dijkstra's Algorithm)
+While the code implementation where I develop the solutions is well annotated and found [here](https://github.com/paulsylvia20/Dijkstras_Algorithm/blob/9fe751c27458ffccc662a31f297e97baf733007d/Dijkstra's_Algorithm.ipynb), I will provide a few conceptual notes about how the algorithm works here below. Also, feel free to check out the detailed [wikipedia article](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm). I found this visual to be quite helpful as well:
+<div align="center">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/2/23/Dijkstras_progress_animation.gif" width="300">
+</div>
+
+<p align="center"> Figure 3: a handy visualization of Dijkstra's algorithm as applied to a basic network (taken from wikipedia). </p>
+
+Dijkstra's algorithm is a powerful tool which iterates through a network connecting a source node to every other node via the shortest possible paths. It does so by following a set of rules and procedures. The main procedure is that at each iteration a node is selected at the leading edge of a running path that extends all the way back to a source node. The path is then progressed along all of its outgoing edges, and the new lengthened paths replace the old path in a running queue. The main rule to be followed is that, at each iteration, the next path is selected from the queue based on its length leading back to the source node. By selecting the closest node that is at the leading edge, the algorithm generally finds the shortest path to each node automatically. However, if on a separate iteration, a shorter path is discovered, then the old path will be replaced in the queue. On a complete search, this method guarentees discovery of the shortest paths in the network. For additional details on how I have implemented the algorithm, please see the attendent python notebook [Dijkstras_Algorithm.ipynb](https://github.com/paulsylvia20/Dijkstras_Algorithm/blob/9fe751c27458ffccc662a31f297e97baf733007d/Dijkstra's_Algorithm.ipynb).
